@@ -173,18 +173,19 @@ if __name__ == "__main__":
 
     train(train_dataset, transformer_model, EPOCHS)
     
-    transformer_model.save("model.h5py")
+    transformer_model.save_weigths("/content/weigths/", save_format="tf")
 
     print("Generating a melody...")
     melody_generator = MelodyGenerator(
         transformer_model, melody_preprocessor.tokenizer
     )
+
     start_sequence = ["C4-1.0", "D4-1.0", "E4-1.0", "C4-1.0"]
     new_melody = melody_generator.generate(start_sequence)
     print(f"Generated melody: {new_melody}")
 
     # save melody
-    with open("melody.txt") as f:
+    with open("melody.txt", "w") as f:
         f.write(new_melody) 
 
     
