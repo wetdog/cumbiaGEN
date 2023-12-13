@@ -220,7 +220,6 @@ if __name__ == "__main__":
     train_dataset = melody_preprocessor.create_training_dataset()
     vocab_size = melody_preprocessor.number_of_tokens_with_padding
 
-    print("dataset shape", train_dataset.shape)
     print("vocab_size", vocab_size)
 
     transformer_model = Transformer(
