@@ -213,7 +213,7 @@ if __name__ == "__main__":
     EPOCHS = args.epochs
     BATCH_SIZE = args.batch_size
     DATA_PATH = args.data_path
-    OUTPUT_DIR = args.output_dir
+    OUTPUT_DIR = args.output_path
     MAX_POSITIONS_IN_POSITIONAL_ENCODING = args.positions
 
     melody_preprocessor = MelodyPreprocessor(DATA_PATH, batch_size=BATCH_SIZE)
