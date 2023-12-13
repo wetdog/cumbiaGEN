@@ -1,13 +1,26 @@
 import tensorflow as tf
 from melodygenerator import MelodyGenerator
 from melodypreprocessor import MelodyPreprocessor
+from transformer import Transformer
 
 # Global parameters
 BATCH_SIZE = 32
 DATA_PATH = "/content/cumbiaGEN/Code/dataset.json"
 N_MELODIES=10
 
-transformer_model = tf.keras.models.load_model('/content/model.h5py')
+transformer_model = Transformer(
+    num_layers=2,
+    d_model=64,
+    num_heads=2,
+    d_feedforward=128,
+    input_vocab_size=vocab_size,
+    target_vocab_size=vocab_size,
+    max_num_positions_in_pe_encoder=MAX_POSITIONS_IN_POSITIONAL_ENCODING,
+    max_num_positions_in_pe_decoder=MAX_POSITIONS_IN_POSITIONAL_ENCODING,
+    dropout_rate=0.1,
+)
+
+
 
 melody_preprocessor = MelodyPreprocessor(DATA_PATH, batch_size=BATCH_SIZE)
 
@@ -22,5 +35,5 @@ for i in range(N_MELODIES):
     print(f"Generated melody: {new_melody}")
 
     # save melody
-    with open("/content/melody_.txt", "w") as f:
+    with open(f"/content/melody_{i}.txt", "w") as f:
         f.write(new_melody) 
