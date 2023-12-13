@@ -32,12 +32,9 @@ from keras.optimizers import Adam
 from melodygenerator import MelodyGenerator
 from melodypreprocessor import MelodyPreprocessor
 from transformer import Transformer
+import argparse
+from argparse import RawTextHelpFormatter
 
-# Global parameters
-EPOCHS = 10
-BATCH_SIZE = 32
-DATA_PATH = "/content/dataset.json"
-MAX_POSITIONS_IN_POSITIONAL_ENCODING = 512
 
 # Loss function and optimizer
 sparse_categorical_crossentropy = SparseCategoricalCrossentropy(
@@ -155,9 +152,66 @@ def _right_pad_sequence_once(sequence):
 
 
 if __name__ == "__main__":
+    # argument parser
+    parser = argparse.ArgumentParser(
+        description="""Resample a folder recusively with librosa
+                       Can be used in place or create a copy of the folder as an output.\n\n
+                       Example run:
+                            python TTS/bin/resample.py
+                                --input_dir /root/LJSpeech-1.1/
+                                --output_sr 22050
+                                --output_dir /root/resampled_LJSpeech-1.1/
+                                --file_ext wav
+                                --n_jobs 24
+                    """,
+        formatter_class=RawTextHelpFormatter,
+    )
+
+    parser.add_argument(
+        "--data_path",
+        type=str,
+        default=None,
+        required=True,
+        help="Path to the file of preprocessed dataset",
+    )
+
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=32,
+        required=False,
+        help="training batch size",
+    )
+
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        default=32,
+        required=False,
+        help="training batch size",
+    )
+
+    parser.add_argument(
+        "--positions",
+        type=int,
+        default=100,
+        required=False,
+        help="MAX_POSITIONS_IN_POSITIONAL_ENCODING",
+    )
+
+
+    args = parser.parse_args()
+    # Global parameters
+    EPOCHS = args.epochs
+    BATCH_SIZE = args.batch_size
+    DATA_PATH = args.data_path
+    MAX_POSITIONS_IN_POSITIONAL_ENCODING = args.positions
+
     melody_preprocessor = MelodyPreprocessor(DATA_PATH, batch_size=BATCH_SIZE)
     train_dataset = melody_preprocessor.create_training_dataset()
     vocab_size = melody_preprocessor.number_of_tokens_with_padding
+
+    print("vocab_size", vocab_size)
 
     transformer_model = Transformer(
         num_layers=2,
@@ -173,19 +227,20 @@ if __name__ == "__main__":
 
     train(train_dataset, transformer_model, EPOCHS)
     
-    transformer_model.save_weigths("/content/weigths/", save_format="tf")
+    transformer_model.save_weights("/content/weigths/", save_format="tf")
 
     print("Generating a melody...")
     melody_generator = MelodyGenerator(
         transformer_model, melody_preprocessor.tokenizer
     )
 
-    start_sequence = ["C4-1.0", "D4-1.0", "E4-1.0", "C4-1.0"]
-    new_melody = melody_generator.generate(start_sequence)
-    print(f"Generated melody: {new_melody}")
+    for i in range(5):
+        start_sequence = ["C4-1.0", "D4-1.0", "E4-1.0", "C4-1.0"]
+        new_melody = melody_generator.generate(start_sequence)
+        print(f"Generated melody: {new_melody}")
 
-    # save melody
-    with open("melody.txt", "w") as f:
-        f.write(new_melody) 
+        # save melody
+        with open(f"melody_{i}.txt", "w") as f:
+            f.write(new_melody) 
 
     
