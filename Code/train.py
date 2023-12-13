@@ -248,9 +248,14 @@ if __name__ == "__main__":
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
-
-    for i in range(5):
-        start_sequence = ["C4-1.0", "D4-1.0", "E4-1.0", "C4-1.0"]
+    start_sequences = [["C4-1.0", "D4-1.0", "E4-1.0"],
+                        ["E4-1.0", "G4-1.0", "F4-1.0"], 
+                        ["G4-1.0", "A4-1.0", "C5-1.0"],
+                        ["A4-1.0", "E4-1.0", "D4-1.0"],
+                        ["D4-1.0", "F4-1.0", "A4-1.0"]]
+    
+    for i, start_sequence in enumerate(start_sequences):
+        
         new_melody = melody_generator.generate(start_sequence)
         print(f"Generated melody: {new_melody}")
 
