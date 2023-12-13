@@ -34,7 +34,7 @@ from melodypreprocessor import MelodyPreprocessor
 from transformer import Transformer
 import argparse
 from argparse import RawTextHelpFormatter
-
+import os
 
 # Loss function and optimizer
 sparse_categorical_crossentropy = SparseCategoricalCrossentropy(
@@ -176,6 +176,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--output_path",
+        type=str,
+        default=None,
+        required=True,
+        help="Path where the melodies are stored",
+    )
+
+    parser.add_argument(
         "--batch_size",
         type=int,
         default=32,
@@ -205,12 +213,14 @@ if __name__ == "__main__":
     EPOCHS = args.epochs
     BATCH_SIZE = args.batch_size
     DATA_PATH = args.data_path
+    OUTPUT_DIR = args.output_dir
     MAX_POSITIONS_IN_POSITIONAL_ENCODING = args.positions
 
     melody_preprocessor = MelodyPreprocessor(DATA_PATH, batch_size=BATCH_SIZE)
     train_dataset = melody_preprocessor.create_training_dataset()
     vocab_size = melody_preprocessor.number_of_tokens_with_padding
 
+    print("dataset shape", train_dataset.shape)
     print("vocab_size", vocab_size)
 
     transformer_model = Transformer(
@@ -233,6 +243,12 @@ if __name__ == "__main__":
     melody_generator = MelodyGenerator(
         transformer_model, melody_preprocessor.tokenizer
     )
+
+    # create dir for saving melodies
+
+    if not os.path.exist(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
 
     for i in range(5):
         start_sequence = ["C4-1.0", "D4-1.0", "E4-1.0", "C4-1.0"]
