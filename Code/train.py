@@ -245,7 +245,7 @@ if __name__ == "__main__":
 
     # create dir for saving melodies
 
-    if not os.path.exist(OUTPUT_DIR):
+    if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
 
