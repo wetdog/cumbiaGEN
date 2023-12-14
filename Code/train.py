@@ -284,5 +284,5 @@ if __name__ == "__main__":
         print(f"Generated melody: {new_melody}")
 
         # save melody
-        with open(f"melody_{i}.txt", "w") as f:
+        with open(os.path.join(OUTPUT_DIR, f"melody_{i}.txt"), "w") as f:
             f.write(new_melody)
