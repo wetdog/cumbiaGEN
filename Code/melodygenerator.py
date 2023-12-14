@@ -40,7 +40,7 @@ class MelodyGenerator:
     based on a starting sequence.
     """
 
-    def __init__(self, transformer, tokenizer, max_length=50):
+    def __init__(self, transformer, tokenizer, temperature, max_length=50,):
         """
         Initializes the MelodyGenerator.
 
@@ -52,6 +52,7 @@ class MelodyGenerator:
         self.transformer = transformer
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.temperature = temperature
 
     def generate(self, start_sequence):
         """
@@ -104,9 +105,19 @@ class MelodyGenerator:
         Returns:
             predicted_note (int): The index of the predicted note.
         """
+        
         latest_predictions = predictions[:, -1, :]
-        predicted_note_index = tf.argmax(latest_predictions, axis=1)
-        predicted_note = predicted_note_index.numpy()[0]
+        # Apply temperature to the logits
+        scaled_predictions = latest_predictions / self.temperature
+
+        # Apply softmax to obtain probabilities
+        soft_predictions = tf.nn.softmax(scaled_predictions)
+
+        # Sample from the distribution
+        predicted_note_index = tf.random.categorical(soft_predictions, 1)
+
+        # Extract the sampled index
+        predicted_note = predicted_note_index.numpy()[0, 0]
         return predicted_note
 
     def _append_predicted_note(self, input_tensor, predicted_note):

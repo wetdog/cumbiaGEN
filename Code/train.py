@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
     print("Generating a melody...")
     melody_generator = MelodyGenerator(
-        transformer_model, melody_preprocessor.tokenizer
+        transformer_model, melody_preprocessor.tokenizer,temperature=0.8,max_length=25
     )
 
     # create dir for saving melodies
