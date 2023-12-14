@@ -35,6 +35,7 @@ from transformer import Transformer
 import argparse
 from argparse import RawTextHelpFormatter
 import os
+import matplotlib.pyplot as plt
 
 # Loss function and optimizer
 sparse_categorical_crossentropy = SparseCategoricalCrossentropy(
@@ -53,6 +54,11 @@ def train(train_dataset, transformer, epochs):
         epochs (int): The number of epochs to train the model.
     """
     print("Training the model...")
+    models_path = "/content/models"
+    losses = []
+
+    if not(os.path.exists(models_path)):
+        os.mkdir(models_path)
     for epoch in range(epochs):
         total_loss = 0
         # Iterate over each batch in the training dataset
@@ -60,9 +66,20 @@ def train(train_dataset, transformer, epochs):
             # Perform a single training step
             batch_loss = _train_step(input, target, transformer)
             total_loss += batch_loss
+            losses.append(total_loss)
             print(
                 f"Epoch {epoch + 1} Batch {batch + 1} Loss {batch_loss.numpy()}"
             )
+            
+        transformer.save_weights(os.path.join(models_path,f"epoch_{epoch}/"), save_format="tf")
+    
+    # plot loss at the end
+    plt.plot(losses)
+    plt.xlabel("steps")
+    plt.ylabel("loss")
+    plt.savefig(f"training_curves.png")
+    
+
 
 
 @tf.function
@@ -252,7 +269,14 @@ if __name__ == "__main__":
                         ["r-0.5", "C4-0.5", "E4-0.5", "G4-0.5", "F4-1.0"],
                         ["r-1.0", "A4-1.0", "E4-1.0", "A4-1.0", "E4-1.0"],
                         ["r-2.0", "r-1.0", "D4-0.5", "F4-0.5", "E4-0.5", "D4-0.5"],
-                        ["r-2.0", "r-1.0", "D4-0.5","D4-1.0", "F4-1.0", "A4-1.0"]]
+                        ["r-2.0", "r-1.0", "D4-0.5","D4-1.0", "F4-1.0", "A4-1.0"],
+                        ["r-1.0", "A4-1.0", "E4-1.0", "A4-1.0", "r-0.5"],
+                        ["r-0.5", "G3-0.5", "C4-0.5", "D4-0.5", "E4-0.5"],
+                        ["r-0.5", "C4-0.5", "E4-0.5", "G4-0.5", "F4-1.0"],
+                        ["r-1.0", "A4-1.0", "E4-1.0", "A4-1.0", "E4-1.0"],
+                        ["r-2.0", "r-1.0", "D4-0.5", "F4-0.5", "E4-0.5", "D4-0.5"],
+                        ["r-2.0", "r-1.0", "D4-0.5","D4-1.0", "F4-1.0", "A4-1.0"],
+                        ["r-1.0", "A4-1.0", "E4-1.0", "A4-1.0", "r-0.5"]]
     
     for i, start_sequence in enumerate(start_sequences):
         
@@ -261,6 +285,4 @@ if __name__ == "__main__":
 
         # save melody
         with open(f"melody_{i}.txt", "w") as f:
-            f.write(new_melody) 
-
-    
+            f.write(new_melody)
