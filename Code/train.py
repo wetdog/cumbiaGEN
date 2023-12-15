@@ -66,16 +66,17 @@ def train(train_dataset, transformer, epochs):
             # Perform a single training step
             batch_loss = _train_step(input, target, transformer)
             total_loss += batch_loss
-            losses.append(total_loss)
+            
             print(
                 f"Epoch {epoch + 1} Batch {batch + 1} Loss {batch_loss.numpy()}"
             )
+        losses.append(total_loss)
             
         transformer.save_weights(os.path.join(models_path,f"epoch_{epoch}/"), save_format="tf")
     
     # plot loss at the end
     plt.plot(losses)
-    plt.xlabel("steps")
+    plt.xlabel("epoch")
     plt.ylabel("loss")
     plt.savefig(f"training_curves.png")
     
