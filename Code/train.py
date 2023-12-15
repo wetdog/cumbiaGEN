@@ -241,6 +241,7 @@ if __name__ == "__main__":
     DATA_PATH = args.data_path
     OUTPUT_DIR = args.output_path
     MAX_POSITIONS_IN_POSITIONAL_ENCODING = args.positions
+    TEMPERATURE=args.temperature
 
     melody_preprocessor = MelodyPreprocessor(DATA_PATH, batch_size=BATCH_SIZE)
     train_dataset = melody_preprocessor.create_training_dataset()
@@ -266,7 +267,7 @@ if __name__ == "__main__":
 
     print("Generating a melody...")
     melody_generator = MelodyGenerator(
-        transformer_model, melody_preprocessor.tokenizer,temperature=0.8,max_length=25
+        transformer_model, melody_preprocessor.tokenizer,temperature=TEMPERATURE,max_length=25
     )
 
     # create dir for saving melodies
