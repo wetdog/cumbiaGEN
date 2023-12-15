@@ -218,6 +218,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.8,
+        required=False,
+        help="temperature for generation",
+    )
+
+    parser.add_argument(
         "--positions",
         type=int,
         default=100,
